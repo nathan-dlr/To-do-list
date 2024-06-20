@@ -1,5 +1,6 @@
 // Start of wxWidgets "Hello World" Program
 #include  <wx/wx.h>
+#include <wx/artprov.h>
 
 class MyApp : public wxApp
 {
@@ -25,7 +26,8 @@ private:
 //"don't need to define identifiers for "About" and "Exit", as wxWidgets already predefines standard values such as wxID_ABOUT and wxID_EXIT "
 enum
 {
-    ID_Hello = 1
+    ID_Hello = 1,
+    ID_AddTask = 2l
 };
 
 //"this function is called  upon application startup and creates the main window"
@@ -33,6 +35,7 @@ bool MyApp::OnInit()
 {
     //"there is no memory leak in this: wxWidgets takes ownership of all the window objects and destroys them automatically when the corresponding on-screen window is destroyed."
     MyFrame *frame = new MyFrame();
+    frame->SetClientSize(1000, 600);
     //"frames are hidden by default to allow filling them to be filled with contents before showing everything at once."
     //"Show() must be called for the application to appear"
     frame->Show(true);
@@ -55,16 +58,23 @@ bool MyApp::OnInit()
     menuBar->Append(menuFile, "&File");
     menuBar->Append(menuHelp, "&Help");
 
-    SetMenuBar(menuBar);
+    wxButton *addTask = new wxButton(this, wxID_ADD, "Add Task", wxPoint(0,0), wxSize(500,50));
+    addTask->SetBitmap(wxArtProvider::GetBitmap(wxART_PLUS, wxART_BUTTON));
 
-    wxButton *addTask = new wxButton(this, wxID_ADD, "Add Task", wxPoint(150,50));
+    wxBoxSizer* sizer = new wxBoxSizer(wxHORIZONTAL);
+    sizer->Add(addTask, 1);
+
+     SetSizerAndFit(sizer);
+
+
+
 
     //"We have to connect our event handlers to the events we want to handle in them. We do this by calling Bind() to send all the menu events (identified by wxEVT_MENU event type) with the specified ID to the given function."
     Bind(wxEVT_MENU, &MyFrame::OnHello, this, ID_Hello);
     Bind(wxEVT_MENU, &MyFrame::OnAbout, this, wxID_ABOUT);
     Bind(wxEVT_MENU, &MyFrame::OnExit, this, wxID_EXIT);
 
-    Bind(wxEVT_BUTTON, &MyFrame::OnAddTask, this, wxID_ADD);
+    addTask->Bind(wxEVT_BUTTON, &MyFrame::OnAddTask, this, wxID_ADD);
 }
 
 void MyFrame::OnExit(wxCommandEvent& event)
@@ -84,5 +94,4 @@ void MyFrame::OnHello(wxCommandEvent& event)
 }
 
 void MyFrame::OnAddTask(wxCommandEvent& event) {
-
 }
