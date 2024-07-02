@@ -2,9 +2,17 @@
 #include <iostream>
 #include  <wx/wx.h>
 #include <wx/artprov.h>
+#include <sqlite3.h>
+#include <string.h>
+using namespace std;
 
+
+sqlite3* DB;
+const char *filename = "file:tasks.sql";
+int tasks_id = 0;
 int ADD_TASK_Y = 0;
 int TASK_Y = -50;
+int sqlOpen = sqlite3_open(filename, &DB);
 
 class MyApp : public wxApp
 {
@@ -84,6 +92,14 @@ void MyFrame::CreateTask() {
 void MyFrame::OnEnter(wxCommandEvent &event) {
     //crashes when there are two task descriptions open at once
     wxString taskDescription = typeTask->GetValue();
+    //create INSERT INTO statement
+    string insert_stmnt = "INSERT INTO tasks VALUES (";
+    insert_stmnt += to_string(tasks_id);
+    insert_stmnt += ',';
+    insert_stmnt += taskDescription.ToStdString();
+    insert_stmnt += ')';
+    int exit = sqlite3_exec(DB, insert_stmnt.c_str(), NULL, 0, (char **) "Error");
+
     typeTask->Destroy();
     task = new wxCheckBox(this, wxID_ANY, taskDescription, wxPoint(50, TASK_Y), wxSize(500, 50));
 }
