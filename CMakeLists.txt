@@ -7,14 +7,18 @@ find_package(wxWidgets COMPONENTS core base REQUIRED)
 
 include("${wxWidgets_USE_FILE}")
 
-set(SRCS main.cpp)
+set(SRCS main.cpp
+        sqlite3.c)
 
 if (WIN32)
     set(SRCS ${SRCS} wxWidgetTest.rc main.cpp
-            To_do.cpp)
+            To_do.cpp
+            sqlite3.c
+            sqlite3.c)
 endif (WIN32)
 
 
-add_executable(${PROJECT_NAME} WIN32 ${SRCS})
+add_executable(${PROJECT_NAME} WIN32 ${SRCS}
+        sqlite3.c)
 target_link_libraries(${PROJECT_NAME} ${wxWidgets_LIBRARIES})
 
