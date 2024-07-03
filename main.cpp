@@ -4,15 +4,17 @@
 #include <wx/artprov.h>
 #include <sqlite3.h>
 #include <string.h>
+#include <format>
 using namespace std;
 
 
-sqlite3* DB;
-const char *filename = "file:tasks.sql";
+
 int tasks_id = 0;
 int ADD_TASK_Y = 0;
 int TASK_Y = -50;
-int sqlOpen = sqlite3_open(filename, &DB);
+
+
+
 
 class MyApp : public wxApp
 {
@@ -82,6 +84,39 @@ bool MyApp::OnInit()
     addTask->Bind(wxEVT_BUTTON, &MyFrame::OnAddTask, this, wxID_ADD);
 }
 
+int insertTask(const wxString &taskDescription) {
+    sqlite3* DB;
+    sqlite3_stmt * stmt;
+    const char *filename = "/Users/nathan/Dev/tasks";
+    int rc = sqlite3_open(filename, &DB);
+    if (rc) {
+        cout << "Couldn't open database" << endl;
+    }
+//    cout << "Opened file" << endl;
+    string insert_stmnt = format("INSERT INTO tasks VALUES ({}, '{}')", to_string(tasks_id), taskDescription.ToStdString());
+//    cout << insert_stmnt << endl;
+    rc = sqlite3_prepare_v2(DB, insert_stmnt.c_str(), -1, &stmt, NULL);
+    if (rc != SQLITE_OK){
+        cout << "Couldn't prepare statement" << endl;
+    }
+//    else {
+//        cout << "Prepared statement" << endl;
+//    }
+    sqlite3_bind_int(stmt, 1, tasks_id);
+    sqlite3_bind_text(stmt, 2, taskDescription.c_str(), -1, SQLITE_TRANSIENT);
+    sqlite3_step(stmt);
+    if (rc != SQLITE_DONE) {
+        cout << "Couldn't execute statement" << endl;
+    }
+//    else //        cout << "Executed with step" << endl;
+//    }
+    sqlite3_finalize(stmt);
+//    cout << "Destroyed statement" << endl;
+    sqlite3_close(DB);
+//    cout << "Closed database" << endl;
+    tasks_id++;
+    return rc;
+}
 
 void MyFrame::CreateTask() {
     typeTask = new wxTextCtrl(this, wxID_ANY,"Enter Task", wxPoint(0, TASK_Y), wxSize(500, 50), wxTE_PROCESS_ENTER);
@@ -93,12 +128,7 @@ void MyFrame::OnEnter(wxCommandEvent &event) {
     //crashes when there are two task descriptions open at once
     wxString taskDescription = typeTask->GetValue();
     //create INSERT INTO statement
-    string insert_stmnt = "INSERT INTO tasks VALUES (";
-    insert_stmnt += to_string(tasks_id);
-    insert_stmnt += ',';
-    insert_stmnt += taskDescription.ToStdString();
-    insert_stmnt += ')';
-    int exit = sqlite3_exec(DB, insert_stmnt.c_str(), NULL, 0, (char **) "Error");
+    insertTask(taskDescription);
 
     typeTask->Destroy();
     task = new wxCheckBox(this, wxID_ANY, taskDescription, wxPoint(50, TASK_Y), wxSize(500, 50));
