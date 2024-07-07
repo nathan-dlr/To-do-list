@@ -5,8 +5,6 @@
 
 using namespace std;
 
-int TASK_ID = 0;
-
 int countEntries() {
     sqlite3* DB;
     sqlite3_stmt * stmt;
@@ -18,6 +16,24 @@ int countEntries() {
 //    cout << "Opened file" << endl;
     string insert_stmnt = "SELECT COUNT(*) FROM tasks";
 //    cout << insert_stmnt << endl;
+    rc = sqlite3_prepare_v2(DB, insert_stmnt.c_str(), -1, &stmt, NULL);
+    if (rc != SQLITE_OK){
+        cout << "Couldn't prepare statement" << endl;
+    }
+//    else {
+//        cout << "Prepared statement" << endl;
+//    }
+    rc = sqlite3_step(stmt);
+    if (rc == SQLITE_ROW) {
+        rc = sqlite3_column_int(stmt, 0);
+    }
+    else {
+       cout << "Execution with step failed" << endl;
+    }
+    sqlite3_finalize(stmt);
+//    cout << "Destroyed statement" << endl;
+    sqlite3_close(DB);
+//    cout << "Closed database" << endl;
     return rc;
 }
 
@@ -31,7 +47,7 @@ int insertTask(const wxString &taskDescription) {
         cout << "Couldn't open database" << endl;
     }
 //    cout << "Opened file" << endl;
-    string insert_stmnt = format("INSERT INTO tasks VALUES ({}, '{}')", to_string(TASK_ID), taskDescription.ToStdString());
+    string insert_stmnt = format("INSERT INTO tasks VALUES ('{}')",taskDescription.ToStdString());
 //    cout << insert_stmnt << endl;
     rc = sqlite3_prepare_v2(DB, insert_stmnt.c_str(), -1, &stmt, NULL);
     if (rc != SQLITE_OK){
@@ -40,8 +56,8 @@ int insertTask(const wxString &taskDescription) {
 //    else {
 //        cout << "Prepared statement" << endl;
 //    }
-    sqlite3_bind_int(stmt, 1, TASK_ID);
-    sqlite3_bind_text(stmt, 2, taskDescription.c_str(), -1, SQLITE_TRANSIENT);
+//    sqlite3_bind_int(stmt, 1, TASK_ID);
+    sqlite3_bind_text(stmt, 1, taskDescription.c_str(), -1, SQLITE_TRANSIENT);
     rc = sqlite3_step(stmt);
     if (rc != SQLITE_DONE) {
         cout << "Couldn't execute statement" << endl;
@@ -52,6 +68,6 @@ int insertTask(const wxString &taskDescription) {
 //    cout << "Destroyed statement" << endl;
     sqlite3_close(DB);
 //    cout << "Closed database" << endl;
-    TASK_ID++;
+//    TASK_ID++;
     return rc;
 }

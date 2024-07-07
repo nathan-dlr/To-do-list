@@ -8,8 +8,8 @@
 using namespace std;
 
 
-int ADD_TASK_Y = 0;
-int TASK_Y = -50;
+int ADD_TASK_Y;
+int TASK_Y;
 
 
 
@@ -32,12 +32,14 @@ private:
     wxButton* addTask;
     wxBoxSizer* sizer;
     wxCheckBox* task;
+    vector<wxCheckBox*> tasks;
     wxTextCtrl* typeTask;
     void OnExit(wxCommandEvent& event);
     void OnAbout(wxCommandEvent& event);
     void OnAddTask(wxCommandEvent& event);
     void OnEnter(wxCommandEvent& event);
     void CreateTask();
+    void populateTasks();
 };
 
 
@@ -50,6 +52,7 @@ bool MyApp::OnInit()
      //"frames are hidden by default to allow filling them to be filled with contents before showing everything at once."
     //"Show() must be called for the application to appear"
     frame->Show(true);
+
     //"returning true allows the application to start running"
     return true;
 }
@@ -66,7 +69,9 @@ bool MyApp::OnInit()
     menuBar->Append(menuFile, "&File");
     menuBar->Append(menuHelp, "&Help");
 
-    addTask = new wxButton(this, wxID_ADD, "Add Task", wxPoint(0,0), wxSize(500,50));
+    populateTasks();
+
+    addTask = new wxButton(this, wxID_ADD, "Add Task", wxPoint(0,ADD_TASK_Y), wxSize(500,50));
     addTask->SetBitmap(wxArtProvider::GetBitmap(wxART_PLUS, wxART_BUTTON));
 
     sizer = new wxBoxSizer(wxHORIZONTAL);
@@ -80,6 +85,22 @@ bool MyApp::OnInit()
     Bind(wxEVT_MENU, &MyFrame::OnExit, this, wxID_EXIT);
 
     addTask->Bind(wxEVT_BUTTON, &MyFrame::OnAddTask, this, wxID_ADD);
+}
+
+void MyFrame::populateTasks() {
+    int count = countEntries();
+    if (count > 0) {
+        TASK_Y = 0;
+    }
+    else {
+        TASK_Y = -50;
+    }
+
+    for (int i = 0; i < count; i++) {
+        task = new wxCheckBox(this, wxID_ANY, "", wxPoint(50, TASK_Y), wxSize(500,50));
+        tasks.push_back(task);
+    }
+    ADD_TASK_Y = TASK_Y + 50;
 }
 
 void MyFrame::CreateTask() {
