@@ -2,14 +2,12 @@
 #include <iostream>
 #include  <wx/wx.h>
 #include <wx/artprov.h>
-#include <sqlite3.h>
 #include <string.h>
-#include <format>
+#include "database.h"
+
 using namespace std;
 
 
-
-int tasks_id = 0;
 int ADD_TASK_Y = 0;
 int TASK_Y = -50;
 
@@ -82,40 +80,6 @@ bool MyApp::OnInit()
     Bind(wxEVT_MENU, &MyFrame::OnExit, this, wxID_EXIT);
 
     addTask->Bind(wxEVT_BUTTON, &MyFrame::OnAddTask, this, wxID_ADD);
-}
-
-int insertTask(const wxString &taskDescription) {
-    sqlite3* DB;
-    sqlite3_stmt * stmt;
-    const char *filename = "/Users/nathan/Dev/tasks";
-    int rc = sqlite3_open(filename, &DB);
-    if (rc) {
-        cout << "Couldn't open database" << endl;
-    }
-//    cout << "Opened file" << endl;
-    string insert_stmnt = format("INSERT INTO tasks VALUES ({}, '{}')", to_string(tasks_id), taskDescription.ToStdString());
-//    cout << insert_stmnt << endl;
-    rc = sqlite3_prepare_v2(DB, insert_stmnt.c_str(), -1, &stmt, NULL);
-    if (rc != SQLITE_OK){
-        cout << "Couldn't prepare statement" << endl;
-    }
-//    else {
-//        cout << "Prepared statement" << endl;
-//    }
-    sqlite3_bind_int(stmt, 1, tasks_id);
-    sqlite3_bind_text(stmt, 2, taskDescription.c_str(), -1, SQLITE_TRANSIENT);
-    sqlite3_step(stmt);
-    if (rc != SQLITE_DONE) {
-        cout << "Couldn't execute statement" << endl;
-    }
-//    else //        cout << "Executed with step" << endl;
-//    }
-    sqlite3_finalize(stmt);
-//    cout << "Destroyed statement" << endl;
-    sqlite3_close(DB);
-//    cout << "Closed database" << endl;
-    tasks_id++;
-    return rc;
 }
 
 void MyFrame::CreateTask() {
