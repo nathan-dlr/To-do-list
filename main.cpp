@@ -30,10 +30,14 @@ private:
     wxCheckBox* task;
     vector<wxCheckBox*> tasks;
     wxTextCtrl* typeTask;
+    wxBitmapButton* editTask;
+    wxBitmapButton* removeTask;
     void OnExit(wxCommandEvent& event);
     void OnAbout(wxCommandEvent& event);
     void OnAddTask(wxCommandEvent& event);
     void OnEnter(wxCommandEvent& event);
+    void OnEditTask(wxCommandEvent& event);
+    void OnRemoveTask(wxCommandEvent& event);
     void CreateTask();
     void populateTasks();
 };
@@ -53,7 +57,7 @@ bool MyApp::OnInit()
     return true;
 }
 
- MyFrame::MyFrame() : wxFrame(nullptr, wxID_ANY, "To-Do") {
+ MyFrame::MyFrame() : wxFrame(nullptr, wxID_ANY, "To Do") {
     //"menu pointers don't need to (and, in fact, must not) be destroyed because they are owned by the menu bar, which is itself owned by the frame, which is owned, i.e. will be destroyed, by wxWidgets."
     wxMenu *menuFile = new wxMenu;
     menuFile->Append(wxID_EXIT);
@@ -87,6 +91,9 @@ void MyFrame::populateTasks() {
     for (int i = 0; i < count; i++) {
         TASK_Y += 50;
         task = new wxCheckBox(this, wxID_ANY, descriptions[i], wxPoint(50, TASK_Y), wxSize(500,50));
+        editTask = new wxBitmapButton(this,wxID_EDIT, wxArtProvider::GetBitmapBundle(wxART_EDIT), wxPoint(900, TASK_Y + 10), wxSize(30, 30));
+        removeTask = new wxBitmapButton(this, wxID_REMOVE, wxArtProvider::GetBitmapBundle(wxART_CROSS_MARK), wxPoint(950, TASK_Y + 10), wxSize(30,30));
+        editTask->Bind(wxEVT_BUTTON, &MyFrame::OnEditTask, this, wxID_EDIT);
         tasks.push_back(task);
     }
     ADD_TASK_Y = TASK_Y + 50;
@@ -125,4 +132,18 @@ void MyFrame::OnAddTask(wxCommandEvent& event) {
     TASK_Y += 50;
     CreateTask();
     addTask->wxWindow::Move(0,ADD_TASK_Y, wxSIZE_USE_EXISTING);
+}
+
+void MyFrame::OnEditTask(wxCommandEvent& event) {
+    wxObject* obj = event.GetEventObject();
+    wxBitmapButton* button = wxDynamicCast(obj, wxBitmapButton);
+    wxPoint position = button->GetPosition();
+    int index = (position.y - 10) / 50;
+}
+
+void MyFrame::OnRemoveTask(wxCommandEvent& event) {
+    wxObject* obj = event.GetEventObject();
+    wxBitmapButton* button = wxDynamicCast(obj, wxBitmapButton);
+    wxPoint position = button->GetPosition();
+    int index = (position.y - 10) / 50;
 }
