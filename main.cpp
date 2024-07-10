@@ -7,12 +7,8 @@
 
 using namespace std;
 
-
 int ADD_TASK_Y;
-int TASK_Y;
-
-
-
+int TASK_Y = -50;
 
 class MyApp : public wxApp
 {
@@ -74,13 +70,11 @@ bool MyApp::OnInit()
     addTask = new wxButton(this, wxID_ADD, "Add Task", wxPoint(0,ADD_TASK_Y), wxSize(500,50));
     addTask->SetBitmap(wxArtProvider::GetBitmap(wxART_PLUS, wxART_BUTTON));
 
-    sizer = new wxBoxSizer(wxHORIZONTAL);
-    sizer->Add(addTask, 1);
+//    sizer = new wxBoxSizer(wxHORIZONTAL);
+//    sizer->Add(addTask, 1);
+//    SetSizerAndFit(sizer);
 
-     SetSizerAndFit(sizer);
-
-
-     //"We have to connect our event handlers to the events we want to handle in them. We do this by calling Bind() to send all the menu events (identified by wxEVT_MENU event type) with the specified ID to the given function."
+    //"We have to connect our event handlers to the events we want to handle in them. We do this by calling Bind() to send all the menu events (identified by wxEVT_MENU event type) with the specified ID to the given function."
     Bind(wxEVT_MENU, &MyFrame::OnAbout, this, wxID_ABOUT);
     Bind(wxEVT_MENU, &MyFrame::OnExit, this, wxID_EXIT);
 
@@ -89,15 +83,10 @@ bool MyApp::OnInit()
 
 void MyFrame::populateTasks() {
     int count = countEntries();
-    if (count > 0) {
-        TASK_Y = 0;
-    }
-    else {
-        TASK_Y = -50;
-    }
-
+    vector<string> descriptions = getDescription();
     for (int i = 0; i < count; i++) {
-        task = new wxCheckBox(this, wxID_ANY, "", wxPoint(50, TASK_Y), wxSize(500,50));
+        TASK_Y += 50;
+        task = new wxCheckBox(this, wxID_ANY, descriptions[i], wxPoint(50, TASK_Y), wxSize(500,50));
         tasks.push_back(task);
     }
     ADD_TASK_Y = TASK_Y + 50;
@@ -131,7 +120,7 @@ void MyFrame::OnAbout(wxCommandEvent& event)
 }
 
 void MyFrame::OnAddTask(wxCommandEvent& event) {
-    //add an if-else statement thatll stop the button from moving when its at the bottom of the screen
+    //add an if-else statement that'll stop the button from moving when it's at the bottom of the screen
     ADD_TASK_Y += 50;
     TASK_Y += 50;
     CreateTask();

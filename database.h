@@ -9,3 +9,4 @@
 
 int insertTask(const wxString &taskDescription);
 int countEntries();
+std::vector<std::string> getDescription();
