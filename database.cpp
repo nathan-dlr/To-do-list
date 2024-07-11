@@ -47,7 +47,6 @@ int insertTask(const wxString &taskDescription) {
     }
 //    cout << "Opened file" << endl;
     string insert_stmnt = format("INSERT INTO tasks(description) VALUES('{}');",taskDescription.ToStdString());
-//    cout << insert_stmnt << endl;
     rc = sqlite3_prepare_v2(DB, insert_stmnt.c_str(), -1, &stmt, NULL);
     if (rc != SQLITE_OK){
         cout << "Couldn't prepare statement" << endl;
@@ -103,4 +102,37 @@ vector<string> getDescription() {
     sqlite3_close(DB);
 
     return descriptions;
+}
+
+int editTask(int id, const wxString &taskDescription) {
+    sqlite3* DB;
+    sqlite3_stmt* stmt;
+    const char *filename = "/Users/nathan/Dev/tasks";
+    int rc = sqlite3_open(filename, &DB);
+    if (rc) {
+        cout << "Couldn't open file" << endl;
+    }
+//    cout << "Opened file" << endl;
+    string insert_stmnt = format("UPDATE tasks SET description = '{}' WHERE id = {};",taskDescription.ToStdString(), id);
+    rc = sqlite3_prepare_v2(DB, insert_stmnt.c_str(), -1, &stmt, NULL);
+    if (rc != SQLITE_OK){
+        cout << "Couldn't prepare statement" << endl;
+    }
+//    else {
+//        cout << "Prepared statement" << endl;
+//    }
+    sqlite3_bind_text(stmt, 1, taskDescription.c_str(), -1, SQLITE_TRANSIENT);
+    sqlite3_bind_int(stmt, 2, id);
+    rc = sqlite3_step(stmt);
+    if (rc != SQLITE_DONE) {
+        cout << "Couldn't execute statement" << endl;
+    }
+//    else {
+//      cout << "Executed statement" << endl;
+//    }
+    sqlite3_finalize(stmt);
+//    cout << "Destroyed statement" << endl;
+    sqlite3_close(DB);
+//    cout << "Closed database" << endl;
+    return rc;
 }

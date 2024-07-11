@@ -9,6 +9,7 @@ using namespace std;
 
 int ADD_TASK_Y;
 int TASK_Y = -50;
+bool CAN_EDIT = true;
 
 class MyApp : public wxApp
 {
@@ -30,14 +31,15 @@ private:
     wxCheckBox* task;
     wxTextCtrl* typeTask;
     vector<wxCheckBox*> tasks;
-    wxBitmapButton* editTask;
-    vector<wxBitmapButton*> edits;
+    wxBitmapButton* editTaskButton;
+    vector<wxBitmapButton*> editButtons;
     wxBitmapButton* removeTask;
-    vector<wxBitmapButton*> removes;
+    vector<wxBitmapButton*> removeButtons;
     void OnExit(wxCommandEvent& event);
     void OnAbout(wxCommandEvent& event);
     void OnAddTask(wxCommandEvent& event);
-    void OnEnter(wxCommandEvent& event);
+    void OnEnterNew(wxCommandEvent& event);
+    void OnEnterEdit(wxCommandEvent& event);
     void OnEditTask(wxCommandEvent& event);
     void OnRemoveTask(wxCommandEvent& event);
     void CreateTask();
@@ -93,14 +95,14 @@ void MyFrame::populateTasks() {
     for (int i = 0; i < count; i++) {
         TASK_Y += 50;
         task = new wxCheckBox(this, wxID_ANY, descriptions[i], wxPoint(50, TASK_Y), wxSize(500,50));
-        editTask = new wxBitmapButton(this,wxID_EDIT, wxArtProvider::GetBitmapBundle(wxART_EDIT), wxPoint(900, TASK_Y + 10), wxSize(30, 30));
+        editTaskButton = new wxBitmapButton(this, wxID_EDIT, wxArtProvider::GetBitmapBundle(wxART_EDIT), wxPoint(900, TASK_Y + 10), wxSize(30, 30));
         removeTask = new wxBitmapButton(this, wxID_REMOVE, wxArtProvider::GetBitmapBundle(wxART_CROSS_MARK), wxPoint(950, TASK_Y + 10), wxSize(30,30));
 
-        editTask->Bind(wxEVT_BUTTON, &MyFrame::OnEditTask, this, wxID_EDIT);
+        editTaskButton->Bind(wxEVT_BUTTON, &MyFrame::OnEditTask, this, wxID_EDIT);
         removeTask->Bind(wxEVT_BUTTON, &MyFrame::OnRemoveTask, this, wxID_REMOVE);
 
-        edits.push_back(editTask);
-        removes.push_back(removeTask);
+        editButtons.push_back(editTaskButton);
+        removeButtons.push_back(removeTask);
         tasks.push_back(task);
     }
     ADD_TASK_Y = TASK_Y + 50;
@@ -108,18 +110,34 @@ void MyFrame::populateTasks() {
 
 void MyFrame::CreateTask() {
     typeTask = new wxTextCtrl(this, wxID_ANY,"Enter Task", wxPoint(0, TASK_Y), wxSize(500, 50), wxTE_PROCESS_ENTER);
-    typeTask->Bind(wxEVT_TEXT_ENTER, &MyFrame::OnEnter, this);
+    removeTask = new wxBitmapButton(this, wxID_REMOVE, wxArtProvider::GetBitmapBundle(wxART_CROSS_MARK), wxPoint(950, TASK_Y + 10), wxSize(30,30));
 
+    typeTask->Bind(wxEVT_TEXT_ENTER, &MyFrame::OnEnterNew, this);
+    removeTask->Bind(wxEVT_BUTTON, &MyFrame::OnRemoveTask, this, wxID_REMOVE);
 }
 
-void MyFrame::OnEnter(wxCommandEvent &event) {
-    //crashes when there are two task descriptions open at once
+void MyFrame::OnEnterNew(wxCommandEvent &event) {
     wxString taskDescription = typeTask->GetValue();
     //create INSERT INTO statement
     insertTask(taskDescription);
-
     typeTask->Destroy();
     task = new wxCheckBox(this, wxID_ANY, taskDescription, wxPoint(50, TASK_Y), wxSize(500, 50));
+    CAN_EDIT = true;
+}
+
+void MyFrame::OnEnterEdit(wxCommandEvent &event) {
+    wxString taskDescription = typeTask->GetValue();
+    wxPoint position = typeTask->GetPosition();
+    int index = position.y / 50;
+    editTask(index + 1, taskDescription);
+    typeTask->Destroy();
+    task = new wxCheckBox(this, wxID_ANY, taskDescription, wxPoint(50, position.y), wxSize(500, 50));
+    editTaskButton = new wxBitmapButton(this, wxID_EDIT, wxArtProvider::GetBitmapBundle(wxART_EDIT), wxPoint(900, position.y + 10), wxSize(30, 30));
+    tasks[index] = task;
+    cout << tasks.size();
+    editButtons[index] = editTaskButton;
+    editTaskButton->Bind(wxEVT_BUTTON, &MyFrame::OnEditTask, this, wxID_EDIT);
+    CAN_EDIT = true;
 }
 
 void MyFrame::OnExit(wxCommandEvent& event)
@@ -135,17 +153,32 @@ void MyFrame::OnAbout(wxCommandEvent& event)
 
 void MyFrame::OnAddTask(wxCommandEvent& event) {
     //add an if-else statement that'll stop the button from moving when it's at the bottom of the screen
-    ADD_TASK_Y += 50;
-    TASK_Y += 50;
-    CreateTask();
-    addTask->wxWindow::Move(0,ADD_TASK_Y, wxSIZE_USE_EXISTING);
+    if (CAN_EDIT) {
+        CAN_EDIT = false;
+        ADD_TASK_Y += 50;
+        TASK_Y += 50;
+        CreateTask();
+        addTask->wxWindow::Move(0,ADD_TASK_Y, wxSIZE_USE_EXISTING);
+    }
 }
 
 void MyFrame::OnEditTask(wxCommandEvent& event) {
-    wxObject* obj = event.GetEventObject();
-    wxBitmapButton* button = wxDynamicCast(obj, wxBitmapButton);
-    wxPoint position = button->GetPosition();
-    int index = (position.y - 10) / 50;
+    if (CAN_EDIT) {
+        CAN_EDIT = false;
+        wxObject* obj = event.GetEventObject();
+        wxBitmapButton* button = wxDynamicCast(obj, wxBitmapButton);
+        wxPoint position = button->GetPosition();
+        int index = (position.y - 10) / 50;
+        wxString label = tasks[index]->GetLabel();
+        cout << tasks.size() << endl;
+        tasks[index]->Destroy();
+        editButtons[index]->Destroy();
+        typeTask = new wxTextCtrl(this, wxID_ANY,label.c_str(), wxPoint(0, 50 * index), wxSize(500, 50), wxTE_PROCESS_ENTER);
+        typeTask->Bind(wxEVT_TEXT_ENTER, &MyFrame::OnEnterEdit, this);
+    }
+
+    //turn checkbox into textbox and remove edit button
+
 }
 
 void MyFrame::OnRemoveTask(wxCommandEvent& event) {
