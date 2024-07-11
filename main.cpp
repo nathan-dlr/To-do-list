@@ -28,10 +28,12 @@ private:
     wxButton* addTask;
     wxBoxSizer* sizer;
     wxCheckBox* task;
-    vector<wxCheckBox*> tasks;
     wxTextCtrl* typeTask;
+    vector<wxCheckBox*> tasks;
     wxBitmapButton* editTask;
+    vector<wxBitmapButton*> edits;
     wxBitmapButton* removeTask;
+    vector<wxBitmapButton*> removes;
     void OnExit(wxCommandEvent& event);
     void OnAbout(wxCommandEvent& event);
     void OnAddTask(wxCommandEvent& event);
@@ -93,7 +95,12 @@ void MyFrame::populateTasks() {
         task = new wxCheckBox(this, wxID_ANY, descriptions[i], wxPoint(50, TASK_Y), wxSize(500,50));
         editTask = new wxBitmapButton(this,wxID_EDIT, wxArtProvider::GetBitmapBundle(wxART_EDIT), wxPoint(900, TASK_Y + 10), wxSize(30, 30));
         removeTask = new wxBitmapButton(this, wxID_REMOVE, wxArtProvider::GetBitmapBundle(wxART_CROSS_MARK), wxPoint(950, TASK_Y + 10), wxSize(30,30));
+
         editTask->Bind(wxEVT_BUTTON, &MyFrame::OnEditTask, this, wxID_EDIT);
+        removeTask->Bind(wxEVT_BUTTON, &MyFrame::OnRemoveTask, this, wxID_REMOVE);
+
+        edits.push_back(editTask);
+        removes.push_back(removeTask);
         tasks.push_back(task);
     }
     ADD_TASK_Y = TASK_Y + 50;
