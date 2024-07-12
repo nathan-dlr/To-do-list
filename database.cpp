@@ -108,3 +108,37 @@ int editTask(int id, const wxString &taskDescription) {
     sqlite3_close(DB);
     return rc;
 }
+
+int removeTask(int id) {
+    sqlite3* DB;
+    sqlite3_stmt* stmt;
+    const char *filename = "/Users/nathan/Dev/tasks";
+    int rc = sqlite3_open(filename, &DB);
+    if (rc) {
+        cout << "Couldn't open file" << endl;
+    }
+    string insert_stmt = format("DELETE FROM tasks WHERE id = {};", id);
+    rc = sqlite3_prepare_v2(DB, insert_stmt.c_str(), -1, &stmt, nullptr);
+    if (rc != SQLITE_OK) {
+        cout << "Couldn't prepare statement" << endl;
+    }
+    sqlite3_bind_int(stmt, 1, id);
+    rc = sqlite3_step(stmt);
+    if (rc != SQLITE_DONE) {
+        cout << "Couldn't execute statement" << endl;
+    }
+    sqlite3_finalize(stmt);
+    insert_stmt = format("UPDATE tasks set id = id-1 where id > {};", id);
+    rc = sqlite3_prepare_v2(DB, insert_stmt.c_str(), -1, &stmt, nullptr);
+    if (rc != SQLITE_OK) {
+        cout << "Couldn't prepare statement" << endl;
+    }
+    sqlite3_bind_int(stmt,1,id);
+    rc = sqlite3_step(stmt);
+    if (rc != SQLITE_DONE) {
+        cout << "Couldn't execute statement" << endl;
+    }
+    sqlite3_finalize(stmt);
+    sqlite3_close(DB);
+    return rc;
+}

@@ -11,3 +11,4 @@ int insertTask(const wxString &taskDescription);
 int countEntries();
 std::vector<std::string> getDescription();
 int editTask(int id, const wxString &taskDescription);
+int removeTask(int id);

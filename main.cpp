@@ -33,7 +33,7 @@ private:
     vector<wxCheckBox*> tasks;
     wxBitmapButton* editTaskButton;
     vector<wxBitmapButton*> editButtons;
-    wxBitmapButton* removeTask;
+    wxBitmapButton* removeTaskButton;
     vector<wxBitmapButton*> removeButtons;
     void OnExit(wxCommandEvent const& event);
     void OnAddTask(wxCommandEvent const& event);
@@ -94,24 +94,24 @@ void MyFrame::PopulateTasks() {
         TASK_Y += 50;
         task = new wxCheckBox(this, wxID_ANY, descriptions[i], wxPoint(50, TASK_Y), wxSize(500,50));
         editTaskButton = new wxBitmapButton(this, wxID_EDIT, wxArtProvider::GetBitmapBundle(wxART_EDIT), wxPoint(900, TASK_Y + 10), wxSize(30, 30));
-        removeTask = new wxBitmapButton(this, wxID_REMOVE, wxArtProvider::GetBitmapBundle(wxART_CROSS_MARK), wxPoint(950, TASK_Y + 10), wxSize(30,30));
+        removeTaskButton = new wxBitmapButton(this, wxID_REMOVE, wxArtProvider::GetBitmapBundle(wxART_CROSS_MARK), wxPoint(950, TASK_Y + 10), wxSize(30, 30));
 
         editTaskButton->Bind(wxEVT_BUTTON, &MyFrame::OnEditTask, this, wxID_EDIT);
-        removeTask->Bind(wxEVT_BUTTON, &MyFrame::OnRemoveTask, this, wxID_REMOVE);
+        removeTaskButton->Bind(wxEVT_BUTTON, &MyFrame::OnRemoveTask, this, wxID_REMOVE);
 
         editButtons.push_back(editTaskButton);
-        removeButtons.push_back(removeTask);
+        removeButtons.push_back(removeTaskButton);
         tasks.push_back(task);
     }
 }
 
 void MyFrame::CreateTask() {
     typeTask = new wxTextCtrl(this, wxID_ANY,"Enter Task", wxPoint(0, TASK_Y), wxSize(500, 50), wxTE_PROCESS_ENTER);
-    removeTask = new wxBitmapButton(this, wxID_REMOVE, wxArtProvider::GetBitmapBundle(wxART_CROSS_MARK), wxPoint(950, TASK_Y + 10), wxSize(30,30));
-    removeButtons.push_back(removeTask);
+    removeTaskButton = new wxBitmapButton(this, wxID_REMOVE, wxArtProvider::GetBitmapBundle(wxART_CROSS_MARK), wxPoint(950, TASK_Y + 10), wxSize(30, 30));
+    removeButtons.push_back(removeTaskButton);
 
     typeTask->Bind(wxEVT_TEXT_ENTER, &MyFrame::OnEnterNew, this);
-    removeTask->Bind(wxEVT_BUTTON, &MyFrame::OnRemoveTask, this, wxID_REMOVE);
+    removeTaskButton->Bind(wxEVT_BUTTON, &MyFrame::OnRemoveTask, this, wxID_REMOVE);
 }
 
 void MyFrame::OnEnterNew(wxCommandEvent const &event) {
@@ -191,9 +191,10 @@ void MyFrame::OnRemoveTask(wxCommandEvent const& event) {
     removeButtons.erase(removeButtons.begin() + index);
     if (index != tasks.size()) {
         //tasks and edit buttons only need to be erased when the task being destroyed has already been established
-        //additionally that means their vectors only need to be cleaned up on this condition as well
+        //additionally that means their vectors/DB entries only need to be cleaned up on this condition as well
         tasks.erase(tasks.begin() + index);
         editButtons.erase(editButtons.begin() + index);
+        removeTask(index + 1);
         for (int i = index; i < tasks.size(); i++) {
             int y_pos = removeButtons[i]->GetPosition().y - 50;
             editButtons[i]->wxWindow::Move(900, y_pos, wxSIZE_USE_EXISTING);
