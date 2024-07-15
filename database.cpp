@@ -10,22 +10,22 @@ int TASK_ID;
 int countEntries() {
     sqlite3* DB;
     sqlite3_stmt* stmt;
-    const char *filename = "/Users/nathan/Dev/taskCheckBoxes";
+    const char *filename = "/Users/nathan/Dev/tasks";
     int rc = sqlite3_open(filename, &DB);
     if (rc) {
-        cout << "Couldn't open database" << endl;
+        cout << "Couldn't open database for count" << endl;
     }
-    string insert_stmnt = "SELECT COUNT(*) FROM taskCheckBoxes;";
+    string insert_stmnt = "SELECT COUNT(*) FROM tasks;";
     rc = sqlite3_prepare_v2(DB, insert_stmnt.c_str(), -1, &stmt, nullptr);
     if (rc != SQLITE_OK){
-        cout << "Couldn't prepare statement" << endl;
+        cout << "Couldn't prepare count statement" << endl;
     }
     rc = sqlite3_step(stmt);
     if (rc == SQLITE_ROW) {
         rc = sqlite3_column_int(stmt, 0);
     }
     else {
-       cout << "Execution with step failed" << endl;
+       cout << "Execution with step failed for count" << endl;
     }
     sqlite3_finalize(stmt);
     sqlite3_close(DB);
@@ -37,21 +37,21 @@ int countEntries() {
 int insertTask(const wxString &taskDescription) {
     sqlite3* DB;
     sqlite3_stmt* stmt;
-    const char *filename = "/Users/nathan/Dev/taskCheckBoxes";
+    const char *filename = "/Users/nathan/Dev/tasks";
     int rc = sqlite3_open(filename, &DB);
     if (rc) {
-        cout << "Couldn't open database" << endl;
+        cout << "Couldn't open database for insert" << endl;
     }
-    string insert_stmnt = format("INSERT INTO taskCheckBoxes VALUES({}, '{}');",TASK_ID, taskDescription.ToStdString());
+    string insert_stmnt = format("INSERT INTO tasks VALUES({}, '{}');",TASK_ID, taskDescription.ToStdString());
     rc = sqlite3_prepare_v2(DB, insert_stmnt.c_str(), -1, &stmt, nullptr);
     if (rc != SQLITE_OK){
-        cout << "Couldn't prepare statement" << endl;
+        cout << "Couldn't prepare statement for insert" << endl;
     }
     sqlite3_bind_int(stmt, 1, TASK_ID);
     sqlite3_bind_text(stmt, 2, taskDescription.c_str(), -1, SQLITE_TRANSIENT);
     rc = sqlite3_step(stmt);
     if (rc != SQLITE_DONE) {
-        cout << "Couldn't execute statement" << endl;
+        cout << "Couldn't execute statement for insert" << endl;
     }
     sqlite3_finalize(stmt);
     sqlite3_close(DB);
@@ -63,15 +63,15 @@ vector<string> getDescription() {
     vector<string> descriptions;
     sqlite3* DB;
     sqlite3_stmt* stmt;
-    const char *filename = "/Users/nathan/Dev/taskCheckBoxes";
+    const char *filename = "/Users/nathan/Dev/tasks";
     int rc = sqlite3_open(filename, &DB);
     if (rc) {
-        cout << "Couldn't open file" << endl;
+        cout << "Couldn't open file for get" << endl;
     }
-    string insert_stmt = "SELECT description FROM taskCheckBoxes;";
+    string insert_stmt = "SELECT description FROM tasks;";
     rc = sqlite3_prepare_v2(DB, insert_stmt.c_str(), -1, &stmt, nullptr);
     if (rc != SQLITE_OK) {
-        cout << "Couldn't prepare statement" << endl;
+        cout << "Couldn't prepare statement for get" << endl;
     }
     string description_str;
     while (sqlite3_step(stmt) == SQLITE_ROW) {
@@ -93,12 +93,12 @@ vector<string> getDescription() {
 int editTask(int id, const wxString &taskDescription) {
     sqlite3* DB;
     sqlite3_stmt* stmt;
-    const char *filename = "/Users/nathan/Dev/taskCheckBoxes";
+    const char *filename = "/Users/nathan/Dev/tasks";
     int rc = sqlite3_open(filename, &DB);
     if (rc) {
         cout << "Couldn't open file" << endl;
     }
-    string insert_stmnt = format("UPDATE taskCheckBoxes SET description = '{}' WHERE id = {};",taskDescription.ToStdString(), id);
+    string insert_stmnt = format("UPDATE tasks SET description = '{}' WHERE id = {};",taskDescription.ToStdString(), id);
     rc = sqlite3_prepare_v2(DB, insert_stmnt.c_str(), -1, &stmt, nullptr);
     if (rc != SQLITE_OK){
         cout << "Couldn't prepare statement" << endl;
@@ -117,13 +117,13 @@ int editTask(int id, const wxString &taskDescription) {
 int removeTask(int id) {
     sqlite3* DB;
     sqlite3_stmt* stmt;
-    const char *filename = "/Users/nathan/Dev/taskCheckBoxes";
+    const char *filename = "/Users/nathan/Dev/tasks";
     int rc = sqlite3_open(filename, &DB);
     if (rc) {
         cout << "Couldn't open file" << endl;
     }
     //delete row
-    string insert_stmt = format("DELETE FROM taskCheckBoxes WHERE id = {};", id);
+    string insert_stmt = format("DELETE FROM tasks WHERE id = {};", id);
     rc = sqlite3_prepare_v2(DB, insert_stmt.c_str(), -1, &stmt, nullptr);
     if (rc != SQLITE_OK) {
         cout << "Couldn't prepare statement" << endl;
@@ -136,7 +136,7 @@ int removeTask(int id) {
     sqlite3_finalize(stmt);
     TASK_ID--;
     //decrement ID's
-    insert_stmt = format("UPDATE taskCheckBoxes set id = id-1 where id > {};", id);
+    insert_stmt = format("UPDATE tasks set id = id-1 where id > {};", id);
     rc = sqlite3_prepare_v2(DB, insert_stmt.c_str(), -1, &stmt, nullptr);
     if (rc != SQLITE_OK) {
         cout << "Couldn't prepare statement" << endl;
