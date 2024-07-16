@@ -19,38 +19,31 @@ Task::Task(wxWindow* Frame, int panelY, const std::string &taskDescription) {
     removeButton = new wxBitmapButton(panel, wxID_REMOVE, wxArtProvider::GetBitmapBundle(wxART_CROSS_MARK), wxPoint(950, 10), wxSize(30, 30));
 }
 
-wxTextCtrl* Task::getTextCtrl() {
+wxTextCtrl* Task::GetTextCtrl() {
     return typeTask;
 }
 
-wxCheckBox* Task::getCheckBox() {
+wxCheckBox* Task::GetCheckBox() {
     return checkBox;
 }
 
-wxBitmapButton* Task::getRemoveButton() {
+wxBitmapButton* Task::GetRemoveButton() {
     return removeButton;
 }
 
-wxBitmapButton* Task::getEditButton() {
+wxBitmapButton* Task::GetEditButton() {
     return editButton;
 }
 
-std::size_t Task::getEditOffset() {
-    return offsetof(Task, editButton);
-}
-
-std::size_t Task::getRemoveOffset() {
-    return offsetof(Task, removeButton);
-}
-
-void Task::publishTask(const wxString &taskDescription) {
+wxBitmapButton* Task::PublishTask(const wxString &taskDescription) {
     typeTask->Destroy();
     typeTask = nullptr;
     checkBox  = new wxCheckBox(panel, wxID_ANY, taskDescription, wxPoint(50, 0), wxSize(500, 50));
     editButton = new wxBitmapButton(panel, wxID_EDIT, wxArtProvider::GetBitmapBundle(wxART_EDIT), wxPoint(900, 10), wxSize(30, 30));
+    return editButton;
 }
 
-wxTextCtrl* Task::editTask(const wxString &label) {
+wxTextCtrl* Task::EditTask(const wxString &label) {
     editButton->Destroy();
     checkBox ->Destroy();
     editButton = nullptr;
@@ -59,7 +52,7 @@ wxTextCtrl* Task::editTask(const wxString &label) {
     return typeTask;
 }
 
-wxBitmapButton* Task::publishEditedTask(const wxString &taskDescription) {
+wxBitmapButton* Task::PublishEditedTask(const wxString &taskDescription) {
     typeTask->Destroy();
     typeTask = nullptr;
     checkBox = new wxCheckBox(panel, wxID_ANY, taskDescription, wxPoint(50, 0), wxSize(500, 50));
@@ -67,11 +60,11 @@ wxBitmapButton* Task::publishEditedTask(const wxString &taskDescription) {
     return editButton;
 }
 
-void Task::movePanel() {
+void Task::MovePanel() {
     int y = panel->GetPosition().y - 50;
     panel->wxWindow::Move(0, y, wxSIZE_USE_EXISTING);
 }
 
-void Task::destroyPanel() {
+void Task::DestroyPanel() {
     panel->Destroy();
 }

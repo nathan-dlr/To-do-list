@@ -10,8 +10,8 @@ include("${wxWidgets_USE_FILE}")
 
 set(SRCS main.cpp
         sqlite3.c
-        database.h
-        database.cpp
+        Database.h
+        Database.cpp
         Task.h
         Task.cpp
 )
@@ -20,8 +20,8 @@ if (WIN32)
     set(SRCS ${SRCS} wxWidgetTest.rc main.cpp
             To_do.cpp
             sqlite3.c
-            database.cpp
-            database.h
+            Database.cpp
+            Database.h
             Task.cpp
             Task.h
     )
@@ -30,8 +30,8 @@ endif (WIN32)
 
 add_executable(${PROJECT_NAME} WIN32 ${SRCS}
         sqlite3.c
-        database.h
-        database.cpp
+        Database.h
+        Database.cpp
         Task.h
         Task.cpp)
 target_link_libraries(${PROJECT_NAME} ${wxWidgets_LIBRARIES})

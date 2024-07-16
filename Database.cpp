@@ -2,18 +2,15 @@
 #include  <wx/wx.h>
 #include <sqlite3.h>
 #include <format>
+#include "Database.h"
 
 using namespace std;
 
-int TASK_ID;
 
-int countEntries() {
-    sqlite3* DB;
-    sqlite3_stmt* stmt;
-    const char *filename = "/Users/nathan/Dev/tasks";
+int Database::CountEntries() {
     int rc = sqlite3_open(filename, &DB);
     if (rc) {
-        cout << "Couldn't open database for count" << endl;
+        cout << "Couldn't open Database for count" << endl;
     }
     string insert_stmnt = "SELECT COUNT(*) FROM tasks;";
     rc = sqlite3_prepare_v2(DB, insert_stmnt.c_str(), -1, &stmt, nullptr);
@@ -34,13 +31,10 @@ int countEntries() {
 }
 
 
-int insertTask(const wxString &taskDescription) {
-    sqlite3* DB;
-    sqlite3_stmt* stmt;
-    const char *filename = "/Users/nathan/Dev/tasks";
+int Database::InsertData(const wxString &taskDescription) {
     int rc = sqlite3_open(filename, &DB);
     if (rc) {
-        cout << "Couldn't open database for insert" << endl;
+        cout << "Couldn't open Database for insert" << endl;
     }
     string insert_stmnt = format("INSERT INTO tasks VALUES({}, '{}');",TASK_ID, taskDescription.ToStdString());
     rc = sqlite3_prepare_v2(DB, insert_stmnt.c_str(), -1, &stmt, nullptr);
@@ -59,11 +53,8 @@ int insertTask(const wxString &taskDescription) {
     return rc;
 }
 
-vector<string> getDescription() {
+vector<string> Database::GetDescription() {
     vector<string> descriptions;
-    sqlite3* DB;
-    sqlite3_stmt* stmt;
-    const char *filename = "/Users/nathan/Dev/tasks";
     int rc = sqlite3_open(filename, &DB);
     if (rc) {
         cout << "Couldn't open file for get" << endl;
@@ -90,10 +81,7 @@ vector<string> getDescription() {
     return descriptions;
 }
 
-int editTask(int id, const wxString &taskDescription) {
-    sqlite3* DB;
-    sqlite3_stmt* stmt;
-    const char *filename = "/Users/nathan/Dev/tasks";
+int Database::EditData(int id, const wxString &taskDescription) {
     int rc = sqlite3_open(filename, &DB);
     if (rc) {
         cout << "Couldn't open file" << endl;
@@ -114,10 +102,7 @@ int editTask(int id, const wxString &taskDescription) {
     return rc;
 }
 
-int removeTask(int id) {
-    sqlite3* DB;
-    sqlite3_stmt* stmt;
-    const char *filename = "/Users/nathan/Dev/tasks";
+int Database::RemoveData(int id) {
     int rc = sqlite3_open(filename, &DB);
     if (rc) {
         cout << "Couldn't open file" << endl;
