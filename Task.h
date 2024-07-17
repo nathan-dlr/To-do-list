@@ -12,18 +12,18 @@ private:
     wxBitmapButton* removeButton = nullptr;
     wxBitmapButton* editButton = nullptr;
     wxTextCtrl* typeTask = nullptr;
+    wxBoxSizer* taskSizer;
 
 public:
     Task();
-    Task(wxWindow* Frame, int panelY,const std::string &taskDescription);
-    Task(wxWindow* Frame, int panelY);
+    Task(wxWindow* Frame, int panelY,const std::string &taskDescription, wxBoxSizer* container);
+    Task(wxWindow* Frame, int panelY, wxBoxSizer* container);
     wxTextCtrl* GetTextCtrl();
     wxCheckBox* GetCheckBox();
     wxBitmapButton* GetRemoveButton();
     wxBitmapButton* GetEditButton();
     wxBitmapButton* PublishTask(const wxString &taskDescription);
     wxTextCtrl* EditTask(const wxString &label);
-    wxBitmapButton* PublishEditedTask(const wxString &taskDescription);
     void MovePanel();
     void DestroyPanel();
 
