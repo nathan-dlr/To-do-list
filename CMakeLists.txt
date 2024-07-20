@@ -8,22 +8,32 @@ find_package(wxWidgets COMPONENTS core base REQUIRED)
 
 include("${wxWidgets_USE_FILE}")
 
-set(SRCS main.cpp
+set(SRCS MainFrame.cpp
         sqlite3.c
         Database.h
         Database.cpp
         Task.h
         Task.cpp
+        MainFrame.h
+        App.h
+        App.cpp
 )
 
 if (WIN32)
-    set(SRCS ${SRCS} wxWidgetTest.rc main.cpp
+    set(SRCS ${SRCS} wxWidgetTest.rc MainFrame.cpp
             To_do.cpp
             sqlite3.c
             Database.cpp
             Database.h
             Task.cpp
             Task.h
+            MainFrame.h
+            MainFrame.h
+            MainFrame.h
+            App.h
+            App.h
+            App.cpp
+            App.cpp
     )
 endif (WIN32)
 
@@ -33,6 +43,9 @@ add_executable(${PROJECT_NAME} WIN32 ${SRCS}
         Database.h
         Database.cpp
         Task.h
-        Task.cpp)
+        Task.cpp
+        MainFrame.h
+        App.h
+        App.cpp)
 target_link_libraries(${PROJECT_NAME} ${wxWidgets_LIBRARIES})
 

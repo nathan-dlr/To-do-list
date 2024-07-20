@@ -4,25 +4,22 @@
 #include <format>
 #include "Database.h"
 
-using namespace std;
-
-
 int Database::CountEntries() {
     int rc = sqlite3_open(filename, &DB);
     if (rc) {
-        cout << "Couldn't open Database for count" << endl;
+        std::cout << "Couldn't open Database for count" << std::endl;
     }
-    string insert_stmnt = "SELECT COUNT(*) FROM tasks;";
+    std::string insert_stmnt = "SELECT COUNT(*) FROM tasks;";
     rc = sqlite3_prepare_v2(DB, insert_stmnt.c_str(), -1, &stmt, nullptr);
     if (rc != SQLITE_OK){
-        cout << "Couldn't prepare count statement" << endl;
+        std::cout << "Couldn't prepare count statement" << std::endl;
     }
     rc = sqlite3_step(stmt);
     if (rc == SQLITE_ROW) {
         rc = sqlite3_column_int(stmt, 0);
     }
     else {
-       cout << "Execution with step failed for count" << endl;
+       std::cout << "Execution with step failed for count" << std::endl;
     }
     sqlite3_finalize(stmt);
     sqlite3_close(DB);
@@ -34,18 +31,18 @@ int Database::CountEntries() {
 int Database::InsertData(const wxString &taskDescription) {
     int rc = sqlite3_open(filename, &DB);
     if (rc) {
-        cout << "Couldn't open Database for insert" << endl;
+        std::cout << "Couldn't open Database for insert" << std::endl;
     }
-    string insert_stmnt = format("INSERT INTO tasks VALUES({}, '{}');",TASK_ID, taskDescription.ToStdString());
+    std::string insert_stmnt = format("INSERT INTO tasks VALUES({}, '{}');",TASK_ID, taskDescription.ToStdString());
     rc = sqlite3_prepare_v2(DB, insert_stmnt.c_str(), -1, &stmt, nullptr);
     if (rc != SQLITE_OK){
-        cout << "Couldn't prepare statement for insert" << endl;
+        std::cout << "Couldn't prepare statement for insert" << std::endl;
     }
     sqlite3_bind_int(stmt, 1, TASK_ID);
     sqlite3_bind_text(stmt, 2, taskDescription.c_str(), -1, SQLITE_TRANSIENT);
     rc = sqlite3_step(stmt);
     if (rc != SQLITE_DONE) {
-        cout << "Couldn't execute statement for insert" << endl;
+        std::cout << "Couldn't execute statement for insert" << std::endl;
     }
     sqlite3_finalize(stmt);
     sqlite3_close(DB);
@@ -53,18 +50,18 @@ int Database::InsertData(const wxString &taskDescription) {
     return rc;
 }
 
-vector<string> Database::GetDescription() {
-    vector<string> descriptions;
+std::vector<std::string> Database::GetDescription() {
+    std::vector<std::string> descriptions;
     int rc = sqlite3_open(filename, &DB);
     if (rc) {
-        cout << "Couldn't open file for get" << endl;
+        std::cout << "Couldn't open file for get" << std::endl;
     }
-    string insert_stmt = "SELECT description FROM tasks;";
+   std::string insert_stmt = "SELECT description FROM tasks;";
     rc = sqlite3_prepare_v2(DB, insert_stmt.c_str(), -1, &stmt, nullptr);
     if (rc != SQLITE_OK) {
-        cout << "Couldn't prepare statement for get" << endl;
+        std::cout << "Couldn't prepare statement for get" << std::endl;
     }
-    string description_str;
+    std::string description_str;
     while (sqlite3_step(stmt) == SQLITE_ROW) {
         const unsigned char* description = sqlite3_column_text(stmt, 0);
         int size = sqlite3_column_bytes(stmt, 0);
@@ -84,18 +81,18 @@ vector<string> Database::GetDescription() {
 int Database::EditData(int id, const wxString &taskDescription) {
     int rc = sqlite3_open(filename, &DB);
     if (rc) {
-        cout << "Couldn't open file" << endl;
+        std::cout << "Couldn't open file" << std::endl;
     }
-    string insert_stmnt = format("UPDATE tasks SET description = '{}' WHERE id = {};",taskDescription.ToStdString(), id);
+    std::string insert_stmnt = format("UPDATE tasks SET description = '{}' WHERE id = {};",taskDescription.ToStdString(), id);
     rc = sqlite3_prepare_v2(DB, insert_stmnt.c_str(), -1, &stmt, nullptr);
     if (rc != SQLITE_OK){
-        cout << "Couldn't prepare statement" << endl;
+        std::cout << "Couldn't prepare statement" << std::endl;
     }
     sqlite3_bind_text(stmt, 1, taskDescription.c_str(), -1, SQLITE_TRANSIENT);
     sqlite3_bind_int(stmt, 2, id);
     rc = sqlite3_step(stmt);
     if (rc != SQLITE_DONE) {
-        cout << "Couldn't execute statement" << endl;
+        std::cout << "Couldn't execute statement" << std::endl;
     }
     sqlite3_finalize(stmt);
     sqlite3_close(DB);
@@ -105,31 +102,31 @@ int Database::EditData(int id, const wxString &taskDescription) {
 int Database::RemoveData(int id) {
     int rc = sqlite3_open(filename, &DB);
     if (rc) {
-        cout << "Couldn't open file" << endl;
+        std::cout << "Couldn't open file" << std::endl;
     }
     //delete row
-    string insert_stmt = format("DELETE FROM tasks WHERE id = {};", id);
+    std::string insert_stmt = std::format("DELETE FROM tasks WHERE id = {};", id);
     rc = sqlite3_prepare_v2(DB, insert_stmt.c_str(), -1, &stmt, nullptr);
     if (rc != SQLITE_OK) {
-        cout << "Couldn't prepare statement" << endl;
+        std::cout << "Couldn't prepare statement" << std::endl;
     }
     sqlite3_bind_int(stmt, 1, id);
     rc = sqlite3_step(stmt);
     if (rc != SQLITE_DONE) {
-        cout << "Couldn't execute statement" << endl;
+        std::cout << "Couldn't execute statement" << std::endl;
     }
     sqlite3_finalize(stmt);
     TASK_ID--;
     //decrement ID's
-    insert_stmt = format("UPDATE tasks set id = id-1 where id > {};", id);
+    insert_stmt = std::format("UPDATE tasks set id = id-1 where id > {};", id);
     rc = sqlite3_prepare_v2(DB, insert_stmt.c_str(), -1, &stmt, nullptr);
     if (rc != SQLITE_OK) {
-        cout << "Couldn't prepare statement" << endl;
+        std::cout << "Couldn't prepare statement" << std::endl;
     }
     sqlite3_bind_int(stmt,1,id);
     rc = sqlite3_step(stmt);
     if (rc != SQLITE_DONE) {
-        cout << "Couldn't execute statement" << endl;
+        std::cout << "Couldn't execute statement" << std::endl;
     }
     sqlite3_finalize(stmt);
     sqlite3_close(DB);
