@@ -77,7 +77,10 @@ void MainFrame::OnEditButtonClick(wxCommandEvent const& event) {
         wxObject const* obj = event.GetEventObject();
         auto const* button = wxDynamicCast(obj, wxBitmapButton);
         auto const* currentPanel = button->GetParent();
-        int index = (currentPanel->GetPosition().y) / currentPanel->GetSize().y;
+        cout << "position: " << currentPanel->GetPosition().y << endl;
+        cout << "Size: " << currentPanel->GetSize().y << endl;
+        cout << 305/50;
+        int index = (currentPanel->GetPosition().y) / (currentPanel->GetSize().y + 10);
         wxString label = tasks[index]->GetCheckBox()->GetLabel();
 
         textBox = tasks[index]->EditTask(label);
@@ -89,7 +92,7 @@ void MainFrame::OnEditButtonClick(wxCommandEvent const& event) {
 void MainFrame::OnKeyboardEnterEdit(wxCommandEvent const &event) {
     wxString taskDescription = textBox->GetValue();
     auto const* currentPanel = textBox->GetParent();
-    int index = (currentPanel->GetPosition().y) / currentPanel->GetSize().y;
+    int index = (currentPanel->GetPosition().y) / (currentPanel->GetSize().y + 10);
     DB->EditData(index, taskDescription);
 
     editTaskButton = tasks[index]->PublishTask(taskDescription);
