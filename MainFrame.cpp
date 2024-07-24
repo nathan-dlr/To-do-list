@@ -7,6 +7,8 @@
 
 using namespace std;
 
+const int Y_POS_OFFSET = 10;
+
  MainFrame::MainFrame() : wxFrame(nullptr, wxID_ANY, "To Do") {
     LoadTasks();
 
@@ -43,7 +45,7 @@ void MainFrame::SetupSizer() {
 }
 
 void MainFrame::OnAddTask(wxCommandEvent const& event) {
-    if ((CAN_EDIT && tasks.empty()) || (CAN_EDIT && (taskContainer->GetSize().y + task[0].GetPanelHeight() < addTask->GetPosition().y) )) {
+    if ((CAN_EDIT && tasks.empty()) || (CAN_EDIT && (taskContainer->GetSize().y + tasks[0]->GetPanelHeight() < addTask->GetPosition().y) )) {
         CAN_EDIT = false;
         CreateTask();
     }
@@ -60,6 +62,7 @@ void MainFrame::CreateTask() {
 
     Layout();
 }
+
 void MainFrame::OnKeyboardEnterNew(wxCommandEvent const &event) {
     wxString taskDescription = textBox->GetValue();
     DB->InsertData(taskDescription);
@@ -77,10 +80,7 @@ void MainFrame::OnEditButtonClick(wxCommandEvent const& event) {
         wxObject const* obj = event.GetEventObject();
         auto const* button = wxDynamicCast(obj, wxBitmapButton);
         auto const* currentPanel = button->GetParent();
-        cout << "position: " << currentPanel->GetPosition().y << endl;
-        cout << "Size: " << currentPanel->GetSize().y << endl;
-        cout << 305/50;
-        int index = (currentPanel->GetPosition().y) / (currentPanel->GetSize().y + 10);
+        int index = (currentPanel->GetPosition().y) / (currentPanel->GetSize().y + Y_POS_OFFSET);
         wxString label = tasks[index]->GetCheckBox()->GetLabel();
 
         textBox = tasks[index]->EditTask(label);
@@ -92,7 +92,7 @@ void MainFrame::OnEditButtonClick(wxCommandEvent const& event) {
 void MainFrame::OnKeyboardEnterEdit(wxCommandEvent const &event) {
     wxString taskDescription = textBox->GetValue();
     auto const* currentPanel = textBox->GetParent();
-    int index = (currentPanel->GetPosition().y) / (currentPanel->GetSize().y + 10);
+    int index = (currentPanel->GetPosition().y) / (currentPanel->GetSize().y + Y_POS_OFFSET);
     DB->EditData(index, taskDescription);
 
     editTaskButton = tasks[index]->PublishTask(taskDescription);
@@ -107,7 +107,7 @@ void MainFrame::OnRemoveButtonClick(wxCommandEvent const& event) {
     auto const* button = wxDynamicCast(obj, wxBitmapButton);
     auto const* currentPanel = button->GetParent();
     if (CAN_EDIT || textBox->GetParent() == currentPanel) {
-        int index = (currentPanel->GetPosition().y) / currentPanel->GetSize().y;
+        int index = (currentPanel->GetPosition().y) / (currentPanel->GetSize().y + Y_POS_OFFSET);
         //delete pre-established taskCheckBoxes
         tasks[index]->DestroyPanel();
         delete tasks[index];
