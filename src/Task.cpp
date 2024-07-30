@@ -2,12 +2,14 @@
 #include  <wx/wx.h>
 #include <wx/artprov.h>
 #include "Task.h"
+#include "catch.hpp"
 
 Task::Task() = default;
 
 Task::Task(wxWindow* Frame, wxBoxSizer* container) {
     panel = new wxPanel(Frame, wxID_ANY, wxDefaultPosition, wxSize(1000, 50));
     textBox = new wxTextCtrl(panel, wxID_ANY, "Enter task", wxDefaultPosition, wxSize(900, 50), wxTE_PROCESS_ENTER);
+    textBox->SetFocus();
     removeButton = new wxBitmapButton(panel, wxID_REMOVE, wxArtProvider::GetBitmapBundle(wxART_CROSS_MARK), wxDefaultPosition, wxSize(30, 30));
 
     taskSizer = new wxBoxSizer(wxHORIZONTAL);
@@ -74,6 +76,7 @@ wxTextCtrl* Task::EditTask(const wxString &label) {
     editButton = nullptr;
     checkBox = nullptr;
     textBox = new wxTextCtrl(panel, wxID_ANY, label.c_str(), wxDefaultPosition, wxSize(900, 50), wxTE_PROCESS_ENTER);
+    textBox->SetFocus();
 
     taskSizer->Add(textBox, wxSizerFlags().Proportion(1).Expand().Border(wxALL, 5));
     taskSizer->Add(removeButton, wxSizerFlags().Border(wxALL,5));

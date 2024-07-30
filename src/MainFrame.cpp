@@ -1,8 +1,6 @@
 #include <iostream>
 #include  <wx/wx.h>
 #include <wx/artprov.h>
-#include "Database.h"
-#include "Task.h"
 #include "MainFrame.h"
 
 using namespace std;

@@ -5,7 +5,6 @@
 #ifndef TO_DO_DATABASE_H
 #define TO_DO_DATABASE_H
 
-#endif //TO_DO_DATABASE_H
 
 class Database {
 private:
@@ -20,3 +19,6 @@ public:
     int EditData(int id, const wxString &taskDescription);
     int RemoveData(int id);
 };
+
+
+#endif //TO_DO_DATABASE_H
