@@ -18,6 +18,7 @@ public:
     std::vector<std::string> GetDescription();
     int EditData(int id, const wxString &taskDescription);
     int RemoveData(int id);
+    int DeleteRows();
 };
 
 

@@ -132,3 +132,26 @@ int Database::RemoveData(int id) {
     sqlite3_close(DB);
     return rc;
 }
+
+int Database::DeleteRows() {
+    int rc = sqlite3_open(filename, &DB);
+    if (rc) {
+        std::cout << "Couldn't open Database for count" << std::endl;
+    }
+    std::string insert_stmnt = "DELETE FROM tasks where id >= 0;";
+    rc = sqlite3_prepare_v2(DB, insert_stmnt.c_str(), -1, &stmt, nullptr);
+    if (rc != SQLITE_OK){
+        std::cout << "Couldn't prepare count statement" << std::endl;
+    }
+    rc = sqlite3_step(stmt);
+    if (rc == SQLITE_ROW) {
+        rc = sqlite3_column_int(stmt, 0);
+    }
+    else {
+        std::cout << "Execution with step failed for count" << std::endl;
+    }
+    sqlite3_finalize(stmt);
+    sqlite3_close(DB);
+    TASK_ID = rc;
+    return rc;
+}

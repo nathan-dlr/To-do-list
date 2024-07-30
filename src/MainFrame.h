@@ -32,10 +32,10 @@ public:
     void CreateTask();
     void LoadTasks();
     void SetupSizer();
+    Database* DB = new Database;
 private:
 
     bool CAN_EDIT = true;
-    Database* DB = new Database;
 
 };
 
