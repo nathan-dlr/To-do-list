@@ -6,11 +6,14 @@
 using namespace std;
 
 const int Y_POS_OFFSET = 10;
+const int ADD_X = 900;
+const int ADD_Y = 50;
+const int ADD_TASK_BORDER = 25;
 
  MainFrame::MainFrame() : wxFrame(nullptr, wxID_ANY, "To Do") {
     LoadTasks();
 
-    addTask = new wxButton(this, wxID_ADD, "Add Task", wxDefaultPosition, wxSize(900,50));
+    addTask = new wxButton(this, wxID_ADD, "Add Task", wxDefaultPosition, wxSize(ADD_X, ADD_Y));
     addTask->SetBitmap(wxArtProvider::GetBitmap(wxART_PLUS, wxART_BUTTON));
     addTask->Bind(wxEVT_BUTTON, &MainFrame::OnAddTask, this, wxID_ADD);
 
@@ -37,7 +40,7 @@ void MainFrame::LoadTasks() {
 void MainFrame::SetupSizer() {
     mainSizer->Add(taskContainer, wxSizerFlags().Expand());
     mainSizer->AddStretchSpacer();
-    mainSizer->Add(addTask, wxSizerFlags().Expand().Border(wxALL, 25));
+    mainSizer->Add(addTask, wxSizerFlags().Expand().Border(wxALL, ADD_TASK_BORDER));
     SetSizer(mainSizer);
     mainSizer->SetSizeHints(this);
 }

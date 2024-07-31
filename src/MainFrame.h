@@ -13,7 +13,7 @@ class MainFrame : public wxFrame
 public:
     MainFrame();
 
-
+private:
     wxBoxSizer* mainSizer = new wxBoxSizer(wxVERTICAL);
     wxBoxSizer* taskContainer = new wxBoxSizer(wxVERTICAL);
     wxButton* addTask;
@@ -32,9 +32,8 @@ public:
     void CreateTask();
     void LoadTasks();
     void SetupSizer();
-    Database* DB = new Database;
-private:
 
+    Database* DB = new Database;
     bool CAN_EDIT = true;
 
 };

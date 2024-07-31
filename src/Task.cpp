@@ -4,33 +4,40 @@
 #include "Task.h"
 #include "catch.hpp"
 
+const int PANEL_X = 1000;
+const int TEXTBOX_X = 900;
+const int CHECKBOX_X = 500;
+const int Y_SIZE = 50;
+const int BUTTONS_SIZE = 30;
+const int ADD_TASK_BORDER = 5;
+
 Task::Task() = default;
 
 Task::Task(wxWindow* Frame, wxBoxSizer* container) {
-    panel = new wxPanel(Frame, wxID_ANY, wxDefaultPosition, wxSize(1000, 50));
-    textBox = new wxTextCtrl(panel, wxID_ANY, "Enter task", wxDefaultPosition, wxSize(900, 50), wxTE_PROCESS_ENTER);
+    panel = new wxPanel(Frame, wxID_ANY, wxDefaultPosition, wxSize(PANEL_X, Y_SIZE));
+    textBox = new wxTextCtrl(panel, wxID_ANY, "Enter task", wxDefaultPosition, wxSize(TEXTBOX_X,  Y_SIZE), wxTE_PROCESS_ENTER);
     textBox->SetFocus();
-    removeButton = new wxBitmapButton(panel, wxID_REMOVE, wxArtProvider::GetBitmapBundle(wxART_CROSS_MARK), wxDefaultPosition, wxSize(30, 30));
+    removeButton = new wxBitmapButton(panel, wxID_REMOVE, wxArtProvider::GetBitmapBundle(wxART_CROSS_MARK), wxDefaultPosition, wxSize(BUTTONS_SIZE, BUTTONS_SIZE));
 
     taskSizer = new wxBoxSizer(wxHORIZONTAL);
     panel->SetSizer(taskSizer);
-    taskSizer->Add(textBox, wxSizerFlags().Proportion(1).Expand().Border(wxALL, 5));
-    taskSizer->Add(removeButton, wxSizerFlags().Border(wxALL, 5));
-    container->Add(panel, wxSizerFlags().Expand().Border(wxALL, 5));
+    taskSizer->Add(textBox, wxSizerFlags().Proportion(1).Expand().Border(wxALL, ADD_TASK_BORDER));
+    taskSizer->Add(removeButton, wxSizerFlags().Border(wxALL, ADD_TASK_BORDER));
+    container->Add(panel, wxSizerFlags().Expand().Border(wxALL, ADD_TASK_BORDER));
 }
 
 Task::Task(wxWindow* Frame, const std::string &taskDescription,  wxBoxSizer* container) {
-    panel = new wxPanel(Frame, wxID_ANY, wxDefaultPosition, wxSize(1000, 50));
-    checkBox = new wxCheckBox(panel, wxID_ANY, taskDescription, wxDefaultPosition, wxSize(500, 50));
-    editButton = new wxBitmapButton(panel, wxID_EDIT, wxArtProvider::GetBitmapBundle(wxART_EDIT), wxDefaultPosition, wxSize(30, 30));
-    removeButton = new wxBitmapButton(panel, wxID_REMOVE, wxArtProvider::GetBitmapBundle(wxART_CROSS_MARK), wxDefaultPosition, wxSize(30, 30));
+    panel = new wxPanel(Frame, wxID_ANY, wxDefaultPosition, wxSize(PANEL_X, Y_SIZE));
+    checkBox = new wxCheckBox(panel, wxID_ANY, taskDescription, wxDefaultPosition, wxSize(CHECKBOX_X, Y_SIZE));
+    editButton = new wxBitmapButton(panel, wxID_EDIT, wxArtProvider::GetBitmapBundle(wxART_EDIT), wxDefaultPosition, wxSize(BUTTONS_SIZE, BUTTONS_SIZE));
+    removeButton = new wxBitmapButton(panel, wxID_REMOVE, wxArtProvider::GetBitmapBundle(wxART_CROSS_MARK), wxDefaultPosition, wxSize(BUTTONS_SIZE, BUTTONS_SIZE));
 
     taskSizer = new wxBoxSizer(wxHORIZONTAL);
     panel->SetSizer(taskSizer);
-    taskSizer->Add(checkBox, wxSizerFlags().Proportion(1).Expand().Border(wxLEFT | wxUP, 5));
-    taskSizer->Add(editButton, wxSizerFlags().Border(wxALL, 5));
-    taskSizer->Add(removeButton, wxSizerFlags().Border(wxALL, 5));
-    container->Add(panel, wxSizerFlags().Expand().Border(wxALL, 5));
+    taskSizer->Add(checkBox, wxSizerFlags().Proportion(1).Expand().Border(wxLEFT | wxUP, ADD_TASK_BORDER));
+    taskSizer->Add(editButton, wxSizerFlags().Border(wxALL, ADD_TASK_BORDER));
+    taskSizer->Add(removeButton, wxSizerFlags().Border(wxALL, ADD_TASK_BORDER));
+    container->Add(panel, wxSizerFlags().Expand().Border(wxALL, ADD_TASK_BORDER));
 }
 
 wxTextCtrl* Task::GetTextCtrl() {
@@ -58,12 +65,12 @@ wxBitmapButton* Task::PublishTask(const wxString &taskDescription) {
     taskSizer->Detach(removeButton);
     textBox->Destroy();
     textBox = nullptr;
-    checkBox  = new wxCheckBox(panel, wxID_ANY, taskDescription, wxDefaultPosition, wxSize(500, 50));
-    editButton = new wxBitmapButton(panel, wxID_EDIT, wxArtProvider::GetBitmapBundle(wxART_EDIT), wxDefaultPosition, wxSize(30, 30));
+    checkBox  = new wxCheckBox(panel, wxID_ANY, taskDescription, wxDefaultPosition, wxSize(CHECKBOX_X, Y_SIZE));
+    editButton = new wxBitmapButton(panel, wxID_EDIT, wxArtProvider::GetBitmapBundle(wxART_EDIT), wxDefaultPosition, wxSize(BUTTONS_SIZE, BUTTONS_SIZE));
 
-    taskSizer->Add(checkBox, wxSizerFlags().Proportion(1).Expand().Border(wxALL, 5));
-    taskSizer->Add(editButton, wxSizerFlags().Border(wxALL, 5));
-    taskSizer->Add(removeButton, wxSizerFlags().Border(wxALL, 5));
+    taskSizer->Add(checkBox, wxSizerFlags().Proportion(1).Expand().Border(wxALL, ADD_TASK_BORDER));
+    taskSizer->Add(editButton, wxSizerFlags().Border(wxALL, ADD_TASK_BORDER));
+    taskSizer->Add(removeButton, wxSizerFlags().Border(wxALL, ADD_TASK_BORDER));
     return editButton;
 }
 
@@ -75,16 +82,16 @@ wxTextCtrl* Task::EditTask(const wxString &label) {
     checkBox ->Destroy();
     editButton = nullptr;
     checkBox = nullptr;
-    textBox = new wxTextCtrl(panel, wxID_ANY, label.c_str(), wxDefaultPosition, wxSize(900, 50), wxTE_PROCESS_ENTER);
+    textBox = new wxTextCtrl(panel, wxID_ANY, label.c_str(), wxDefaultPosition, wxSize(TEXTBOX_X, Y_SIZE), wxTE_PROCESS_ENTER);
     textBox->SetFocus();
 
-    taskSizer->Add(textBox, wxSizerFlags().Proportion(1).Expand().Border(wxALL, 5));
-    taskSizer->Add(removeButton, wxSizerFlags().Border(wxALL,5));
+    taskSizer->Add(textBox, wxSizerFlags().Proportion(1).Expand().Border(wxALL, ADD_TASK_BORDER));
+    taskSizer->Add(removeButton, wxSizerFlags().Border(wxALL, ADD_TASK_BORDER));
     return textBox;
 }
 
 void Task::MovePanel() {
-    int y = panel->GetPosition().y - 50;
+    int y = panel->GetPosition().y - Y_SIZE;
     panel->wxWindow::Move(0, y, wxSIZE_USE_EXISTING);
 }
 

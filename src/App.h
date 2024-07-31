@@ -10,8 +10,11 @@
 class App : public wxApp
 {
 public:
-    MainFrame* frame;
     bool OnInit() override;
+
+private:
+    MainFrame* frame;
+
 };
 
 

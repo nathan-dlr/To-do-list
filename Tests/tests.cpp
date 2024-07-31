@@ -73,9 +73,9 @@ TEST_CASE("OnKeyboardEnterNew should make a new task in the DB") {
     wxString test_val = test_frame->textBox->GetValue();
     REQUIRE(test_val == "Enter task");
     test_frame->OnKeyboardEnterNew(wxCommandEvent());
-//    REQUIRE(test_frame->DB->CountEntries() == 1);
+    REQUIRE(test_frame->DB->CountEntries() == 1);
     test_frame->DB->DeleteRows();
-//    REQUIRE(test_frame->DB->CountEntries() == 0);
+    REQUIRE(test_frame->DB->CountEntries() == 0);
     wxTheApp->OnExit();
     wxEntryCleanup();
 }

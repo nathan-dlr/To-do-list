@@ -12,13 +12,14 @@ private:
     sqlite3_stmt* stmt;
     const char *filename = "/Users/nathan/Dev/tasks";
     int TASK_ID = 0;
+    int DeleteRows();
+
 public:
     int InsertData(const wxString &taskDescription);
     int CountEntries();
     std::vector<std::string> GetDescription();
     int EditData(int id, const wxString &taskDescription);
     int RemoveData(int id);
-    int DeleteRows();
 };
 
 
