@@ -28,7 +28,7 @@ Press the "Edit Task" button to create a new textbox over the selected task. You
 Press the "Remove Task" button to delete a task, doing so  pushes all subsequent tasks up to maintain consecutive rows. Tasks can be removed at any time. Deleting a task removes its entry from the database.
 
 <p align="center">
- <img src="https://github.com/user-attachments/assets/b0e3edfe-c105-482f-bbac-703b1c7fd356" alt="Edit Task" width="700">
+ <img src="https://github.com/user-attachments/assets/20904b32-9612-4625-bb23-6c6bfbf4c8ab" alt="Edit Task" width="700">
 </p>
 
 ## Resizing Window
