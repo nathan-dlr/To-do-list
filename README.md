@@ -1,4 +1,4 @@
-# To-do-list
+# To Do List
 
 ## Overview
 This To Do List is a desktop application in which users can add, edit, and delete tasks from their list. It was written in C++ using [wxWidgets](https://www.wxwidgets.org/) for the graphical user interface and has a SQLite database for persistent storage. The application was unit tested using the [Catch2](https://github.com/catchorg/Catch2) framework. 
